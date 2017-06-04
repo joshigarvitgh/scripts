@@ -1,6 +1,8 @@
 import os, cv2, sys
 import numpy as np
-
+import mysql.connector
+import requests
+import re
 from keras.models import model_from_json
 from keras.models import load_model
 
@@ -64,6 +66,14 @@ def predict(argv):
 
 if __name__ == '__main__':
     probability, class_name = predict(sys.argv[1])
+    cnx = mysql.connector.connect(user="osheenchavhan@icmiamigos", password="GHOSTman@1997", host="icmiamigos.mysql.database.azure.com", port=3306, database="miamigos")
+    cursor = cnx.cursor()
+    SQLCommand = ("insert into imageres (uid,percentage,result) values (%s,%s,%s)")
+    cursor.execute(SQLCommand,(sys.argv[1], probability, class_name)
+    cnx.commit()
+    #closing cursor
+    cursor.close()
+    #closing connection
     f= open("result.txt","w")
     f.write(str(probability))
     f.write(class_name)
